@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useData } from '../context/DataContext';
@@ -10,23 +11,39 @@ const Catalog = () => {
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [sortBy, setSortBy] = useState('featured');
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Parse query param for category
+  // Parse query param for category and search
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const categoryParam = params.get('category');
+    const searchParam = params.get('search');
+
     if (categoryParam) {
       const match = categories.find(c => c.title.toLowerCase().includes(categoryParam.toLowerCase()));
       if (match) setSelectedCategory(match.title);
       else if (categoryParam) setSelectedCategory(categoryParam); // Direct fallback
+    } else if (searchParam) {
+      // If searching, default to 'Todos' to search everywhere unless a category is picked later
+      setSelectedCategory('Todos');
     }
+
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    } else {
+      setSearchQuery('');
+    }
+
     window.scrollTo(0, 0);
   }, [location, categories]);
 
   const filteredProducts = products.filter(product => {
     const matchesCategory = selectedCategory === 'Todos' || product.category === selectedCategory;
     const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
-    return matchesCategory && matchesPrice;
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesCategory && matchesPrice && matchesSearch;
   }).sort((a, b) => {
     if (sortBy === 'price-asc') return a.price - b.price;
     if (sortBy === 'price-desc') return b.price - a.price;
@@ -45,6 +62,23 @@ const Catalog = () => {
             Explore nossa coleção completa de brinquedos infláveis. Utilize os filtros para encontrar o tamanho e preço ideal para sua festa.
           </p>
         </div>
+
+        {searchQuery && (
+          <div className="text-center mb-8">
+            <p className="text-lg text-gray-600">
+              Resultados para: <span className="font-bold text-gray-900">"{searchQuery}"</span>
+            </p>
+            <button 
+              onClick={() => {
+                 setSearchQuery('');
+                 window.history.pushState({}, '', '/#/catalogo'); // Simple URL cleanup for HashRouter
+              }}
+              className="text-brand-red text-sm font-bold hover:underline mt-2"
+            >
+              Limpar busca
+            </button>
+          </div>
+        )}
 
         <div className="flex flex-col lg:flex-row gap-8">
           
@@ -145,7 +179,6 @@ const Catalog = () => {
                     <option value="featured">Destaques</option>
                     <option value="price-asc">Menor Preço</option>
                     <option value="price-desc">Maior Preço</option>
-                    <option value="rating">Melhor Avaliados</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
                 </div>
@@ -196,11 +229,17 @@ const Catalog = () => {
                   <Search size={32} className="text-gray-400" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900">Nenhum produto encontrado</h3>
-                <p className="text-gray-500 mt-2">Tente ajustar os filtros de preço ou categoria.</p>
+                <p className="text-gray-500 mt-2">
+                   {searchQuery 
+                     ? `Não encontramos nada com "${searchQuery}".` 
+                     : "Tente ajustar os filtros de preço ou categoria."
+                   }
+                </p>
                 <button 
                   onClick={() => {
                      setSelectedCategory('Todos');
                      setPriceRange([0, 1000]);
+                     setSearchQuery('');
                   }}
                   className="mt-6 text-brand-red font-bold hover:underline"
                 >

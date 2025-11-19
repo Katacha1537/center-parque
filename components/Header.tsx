@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Menu, X, Phone } from 'lucide-react';
 import { COMPANY_INFO } from '../constants';
@@ -15,6 +16,7 @@ interface NavItem {
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const { cartCount, toggleCart } = useCart();
   const { categories } = useData();
   const location = useLocation();
@@ -53,6 +55,18 @@ const Header = () => {
       }
     } else {
       navigate(path);
+    }
+  };
+
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      navigate(`/catalogo?search=${encodeURIComponent(searchTerm)}`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
     }
   };
 
@@ -101,9 +115,15 @@ const Header = () => {
             <input 
               type="text" 
               placeholder="O que você procura?" 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="w-full bg-gray-50 border-2 border-gray-100 rounded-full py-2.5 px-6 focus:outline-none focus:border-brand-red transition-colors text-sm"
             />
-            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-brand-red text-white p-1.5 rounded-full hover:bg-red-700 transition-colors">
+            <button 
+              onClick={handleSearch}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-brand-red text-white p-1.5 rounded-full hover:bg-red-700 transition-colors"
+            >
               <Search size={16} />
             </button>
           </div>
@@ -158,7 +178,22 @@ const Header = () => {
           animate={{ opacity: 1, y: 0 }}
           className="lg:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl left-0 z-40"
         >
-          <nav className="flex flex-col p-4">
+          <div className="p-4 border-b border-gray-100">
+             <div className="relative">
+                <input 
+                  type="text" 
+                  placeholder="O que você procura?" 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-4 pr-10 focus:outline-none focus:border-brand-red"
+                />
+                <button onClick={handleSearch} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">
+                   <Search size={18} />
+                </button>
+             </div>
+          </div>
+          <nav className="flex flex-col p-4 pt-0">
              {navItems.map((item) => (
               <Link 
                 key={item.label} 

@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, ShoppingCart, Truck, ShieldCheck, Clock, Heart, Check, Minus, Plus, Calendar } from 'lucide-react';
+import { ShoppingCart, Truck, ShieldCheck, Clock, Heart, Check, Minus, Plus, Calendar } from 'lucide-react';
 import { COMPANY_INFO } from '../constants';
 import { useCart } from '../context/CartContext';
 import { useData } from '../context/DataContext';
@@ -81,14 +82,8 @@ const ProductDetails = () => {
             <div className="flex-1">
               <div className="mb-6 border-b border-gray-100 pb-6">
                 <div className="flex items-center gap-2 mb-4">
-                   <div className="flex text-brand-yellow">
-                     {[...Array(5)].map((_, i) => (
-                       <Star key={i} size={18} fill={i < Math.floor(product.rating || 5) ? "currentColor" : "none"} className={i < Math.floor(product.rating || 5) ? "" : "text-gray-300"} />
-                     ))}
-                   </div>
-                   <span className="text-sm text-gray-500 font-medium">({product.reviews || 0} avaliações)</span>
                    {product.isNew && (
-                     <span className="bg-brand-red/10 text-brand-red text-xs font-bold px-3 py-1 rounded-full ml-auto uppercase">Lançamento</span>
+                     <span className="bg-brand-red/10 text-brand-red text-xs font-bold px-3 py-1 rounded-full uppercase">Lançamento</span>
                    )}
                 </div>
 
@@ -189,13 +184,13 @@ const ProductDetails = () => {
         {/* Tabs Section */}
         <div className="mt-12 bg-white rounded-3xl border border-gray-100 overflow-hidden p-6 lg:p-10 shadow-sm">
            <div className="flex gap-8 border-b border-gray-200 mb-8 overflow-x-auto">
-              {['description', 'specs', 'reviews'].map((tab) => (
+              {['description', 'specs'].map((tab) => (
                  <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     className={`pb-4 font-bold text-sm uppercase tracking-wide whitespace-nowrap transition-colors border-b-2 ${activeTab === tab ? 'text-brand-red border-brand-red' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
                  >
-                    {tab === 'description' ? 'Descrição Completa' : tab === 'specs' ? 'Especificações Técnicas' : 'Avaliações'}
+                    {tab === 'description' ? 'Descrição Completa' : 'Especificações Técnicas'}
                  </button>
               ))}
            </div>
@@ -221,26 +216,6 @@ const ProductDetails = () => {
                           <span className="text-gray-600 text-right">{value}</span>
                        </div>
                     )) : <p>Sem especificações detalhadas.</p>}
-                 </motion.div>
-              )}
-              {activeTab === 'reviews' && (
-                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-6">
-                    <div className="flex items-center gap-4 bg-gray-50 p-6 rounded-xl">
-                       <div className="text-center">
-                          <span className="block text-5xl font-black text-brand-red">{product.rating}</span>
-                          <div className="flex text-brand-yellow justify-center my-2">
-                             {[...Array(5)].map((_, i) => (
-                                <Star key={i} size={16} fill="currentColor" />
-                             ))}
-                          </div>
-                          <span className="text-sm text-gray-500">{product.reviews} avaliações</span>
-                       </div>
-                       <div className="h-16 w-px bg-gray-300 mx-4 hidden sm:block"></div>
-                       <div className="flex-1">
-                          <p className="italic text-gray-600">"Produto excelente! As crianças amaram e não pararam de brincar um minuto. A equipe de montagem foi super pontual."</p>
-                          <p className="font-bold text-gray-900 mt-2">- Cliente Verificado</p>
-                       </div>
-                    </div>
                  </motion.div>
               )}
            </div>
