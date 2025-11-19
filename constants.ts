@@ -16,15 +16,16 @@ export const PRODUCTS = [
   {
     id: 1,
     name: "Castelo Pula-Pula Encantado",
+    category: "Pula-Pulas",
     price: 180.00,
-    image: "https://images.unsplash.com/photo-1528312152374-e5df1d67509c?auto=format&fit=crop&q=80&w=600",
+    image: "https://images.unsplash.com/photo-1633463656328-7c76a6b9d82a?q=80&w=1000&auto=format&fit=crop",
     isNew: true,
     description: "Ideal para crianças de até 8 anos. Acompanha monitor.",
     installments: "2x sem juros",
     rating: 4.9,
     reviews: 124,
     gallery: [
-      "https://images.unsplash.com/photo-1528312152374-e5df1d67509c?auto=format&fit=crop&q=80&w=800",
+      "https://images.unsplash.com/photo-1633463656328-7c76a6b9d82a?q=80&w=1000&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1605154780386-a34879517bf7?auto=format&fit=crop&q=80&w=800",
       "https://images.unsplash.com/photo-1575366573905-4b192b7709a6?auto=format&fit=crop&q=80&w=800"
     ],
@@ -39,17 +40,18 @@ export const PRODUCTS = [
   {
     id: 2,
     name: "Tobogã Tropical Gigante",
+    category: "Tobogãs",
     price: 350.00,
-    image: "https://images.unsplash.com/photo-1605154780386-a34879517bf7?auto=format&fit=crop&q=80&w=600",
+    image: "https://images.unsplash.com/photo-1529426489333-f149583d0984?q=80&w=1000&auto=format&fit=crop",
     isNew: true,
     description: "Emoção garantida com 5 metros de altura.",
     installments: "3x sem juros",
     rating: 5.0,
     reviews: 89,
     gallery: [
+       "https://images.unsplash.com/photo-1529426489333-f149583d0984?q=80&w=1000&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1605154780386-a34879517bf7?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1570818562144-25568b7542c6?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1530103862676-de3c9fa59588?auto=format&fit=crop&q=80&w=800"
+      "https://images.unsplash.com/photo-1570818562144-25568b7542c6?auto=format&fit=crop&q=80&w=800"
     ],
     longDescription: "Leve a emoção das alturas para sua festa com o Tobogã Tropical Gigante! Com 5 metros de altura e uma descida radical, este brinquedo é o sucesso entre crianças maiores e pré-adolescentes. O tema tropical com palmeiras infláveis cria um ambiente festivo e alegre. Possui escada lateral com apoio para as mãos e parede de proteção no final da descida.",
     specs: {
@@ -62,6 +64,7 @@ export const PRODUCTS = [
   {
     id: 3,
     name: "Futebol de Sabão",
+    category: "Esportivos",
     price: 420.00,
     image: "https://images.unsplash.com/photo-1500995617113-cf789362a3e1?auto=format&fit=crop&q=80&w=600",
     isNew: false,
@@ -85,15 +88,16 @@ export const PRODUCTS = [
   {
     id: 4,
     name: "Piscina de Bolinhas Casinha",
+    category: "Piscinas de Bolinha",
     price: 150.00,
-    image: "https://images.unsplash.com/photo-1570818562144-25568b7542c6?auto=format&fit=crop&q=80&w=600",
+    image: "https://images.unsplash.com/photo-1596464716127-f9a87595ca58?q=80&w=1000&auto=format&fit=crop",
     isNew: false,
     description: "Clássico que não pode faltar. 2000 bolinhas.",
     installments: "2x sem juros",
     rating: 4.9,
     reviews: 210,
     gallery: [
-      "https://images.unsplash.com/photo-1570818562144-25568b7542c6?auto=format&fit=crop&q=80&w=800",
+      "https://images.unsplash.com/photo-1596464716127-f9a87595ca58?q=80&w=1000&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1528312152374-e5df1d67509c?auto=format&fit=crop&q=80&w=800",
       "https://images.unsplash.com/photo-1605154780386-a34879517bf7?auto=format&fit=crop&q=80&w=800"
     ],
@@ -108,6 +112,7 @@ export const PRODUCTS = [
   {
     id: 5,
     name: "Giro Radical Inflável",
+    category: "Esportivos",
     price: 550.00,
     image: "https://images.unsplash.com/photo-1575366573905-4b192b7709a6?auto=format&fit=crop&q=80&w=600",
     isNew: true,
@@ -131,6 +136,7 @@ export const PRODUCTS = [
   {
     id: 6,
     name: "Cama Elástica 3m",
+    category: "Pula-Pulas",
     price: 160.00,
     image: "https://images.unsplash.com/photo-1560025390-4b192b7709a6?auto=format&fit=crop&q=80&w=600",
     isNew: false,
@@ -154,6 +160,7 @@ export const PRODUCTS = [
   {
     id: 7,
     name: "Kit Festa Completa",
+    category: "Kits Festa",
     price: 600.00,
     image: "https://images.unsplash.com/photo-1530103862676-de3c9fa59588?auto=format&fit=crop&q=80&w=600",
     isNew: true,
@@ -177,6 +184,7 @@ export const PRODUCTS = [
   {
     id: 8,
     name: "Touro Mecânico Kids",
+    category: "Esportivos",
     price: 480.00,
     image: "https://images.unsplash.com/photo-1618383055723-f3e0343d5620?auto=format&fit=crop&q=80&w=600",
     isNew: false,
@@ -226,6 +234,7 @@ export const TESTIMONIALS = [
 export const CATEGORIES = [
   { title: "Pula-Pulas", icon: Smile, color: "bg-blue-400" },
   { title: "Tobogãs", icon: Truck, color: "bg-brand-red" },
-  { title: "Kits Festa", icon: Package, color: "bg-brand-yellow" },
-  { title: "Esportivos", icon: Tag, color: "bg-green-500" }
+  { title: "Piscinas de Bolinha", icon: Package, color: "bg-brand-yellow" },
+  { title: "Kits Festa", icon: Tag, color: "bg-green-500" },
+  { title: "Esportivos", icon: Tag, color: "bg-purple-500" }
 ];

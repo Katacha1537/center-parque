@@ -5,6 +5,7 @@ import StatsBar from './StatsBar';
 import AboutSection from './AboutSection';
 import Categories from './Categories';
 import Testimonials from './Testimonials';
+import GallerySection from './GallerySection';
 import CtaSection from './CtaSection';
 
 const Home = () => {
@@ -13,6 +14,7 @@ const Home = () => {
       <Hero />
       <ProductSection />
       <StatsBar />
+      <GallerySection />
       <AboutSection />
       <Categories />
       <Testimonials />

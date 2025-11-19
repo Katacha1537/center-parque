@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, ShoppingCart, Truck, ShieldCheck, Clock, Share2, Heart, Check, Minus, Plus, Calendar } from 'lucide-react';
-import { PRODUCTS, COMPANY_INFO } from '../constants';
+import { Star, ShoppingCart, Truck, ShieldCheck, Clock, Heart, Check, Minus, Plus, Calendar } from 'lucide-react';
+import { COMPANY_INFO } from '../constants';
+import { useCart } from '../context/CartContext';
+import { useData } from '../context/DataContext';
 
 const ProductDetails = () => {
   const { id } = useParams();
-  const product = PRODUCTS.find(p => p.id === Number(id)) || PRODUCTS[0];
+  const { products } = useData();
+  const { addToCart } = useCart();
+  
+  const product = products.find(p => p.id === Number(id)) || products[0];
   
   const [selectedImage, setSelectedImage] = useState(product.gallery?.[0] || product.image);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
+  const [selectedDate, setSelectedDate] = useState('');
 
   // Reset state when product changes
   useEffect(() => {
@@ -19,19 +25,25 @@ const ProductDetails = () => {
     window.scrollTo(0, 0);
   }, [product]);
 
-  const recommendedProducts = PRODUCTS.filter(p => p.id !== product.id).slice(0, 4);
+  const recommendedProducts = products.filter(p => p.id !== product.id && p.category === product.category).slice(0, 4);
+  // Fallback if not enough related category
+  const displayRecommended = recommendedProducts.length > 0 ? recommendedProducts : products.filter(p => p.id !== product.id).slice(0,4);
+
+  const handleAddToCart = () => {
+    addToCart(product, quantity, selectedDate);
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen pt-32 pb-20">
       <div className="container mx-auto px-4">
         
         {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
+        <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8 overflow-x-auto whitespace-nowrap">
           <Link to="/" className="hover:text-brand-red transition-colors">Início</Link>
           <span>/</span>
-          <Link to="/" className="hover:text-brand-red transition-colors">Brinquedos</Link>
+          <Link to="/catalogo" className="hover:text-brand-red transition-colors">Catálogo</Link>
           <span>/</span>
-          <span className="text-gray-900 font-semibold truncate max-w-[200px]">{product.name}</span>
+          <span className="text-gray-900 font-semibold truncate">{product.name}</span>
         </nav>
 
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden p-6 lg:p-10">
@@ -48,9 +60,6 @@ const ProductDetails = () => {
                 <div className="absolute top-4 right-4 flex flex-col gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button className="bg-white p-3 rounded-full shadow-lg hover:text-brand-red hover:scale-110 transition-all">
                     <Heart size={20} />
-                  </button>
-                  <button className="bg-white p-3 rounded-full shadow-lg hover:text-blue-500 hover:scale-110 transition-all">
-                    <Share2 size={20} />
                   </button>
                 </div>
               </div>
@@ -136,10 +145,12 @@ const ProductDetails = () => {
                   </div>
                 </div>
                 <div className="flex-1 min-w-[200px]">
-                   <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Data Prevista</label>
+                   <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Data Prevista (Opcional)</label>
                    <div className="relative">
                      <input 
                        type="date" 
+                       value={selectedDate}
+                       onChange={(e) => setSelectedDate(e.target.value)}
                        className="w-full border border-gray-200 rounded-full py-3 px-4 pl-10 focus:outline-none focus:border-brand-red bg-white text-gray-700"
                      />
                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -149,7 +160,10 @@ const ProductDetails = () => {
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="flex-1 bg-brand-red text-white py-4 rounded-full font-bold text-lg shadow-lg shadow-red-200 hover:bg-red-700 hover:shadow-xl transition-all flex items-center justify-center gap-2">
+                <button 
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-brand-red text-white py-4 rounded-full font-bold text-lg shadow-lg shadow-red-200 hover:bg-red-700 hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                >
                   <ShoppingCart size={20} />
                   Adicionar ao Carrinho
                 </button>
@@ -236,7 +250,7 @@ const ProductDetails = () => {
         <div className="mt-16">
           <h3 className="text-2xl font-display font-bold text-gray-900 mb-8">Quem viu este, também gostou</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-             {recommendedProducts.map((rp) => (
+             {displayRecommended.map((rp) => (
                 <Link to={`/produto/${rp.id}`} key={rp.id} className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all">
                    <div className="aspect-square overflow-hidden relative">
                       <img src={rp.image} alt={rp.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -246,7 +260,7 @@ const ProductDetails = () => {
                    </div>
                    <div className="p-4">
                       <h4 className="font-bold text-gray-900 truncate group-hover:text-brand-red transition-colors">{rp.name}</h4>
-                      <p className="text-xs text-gray-500 mt-1">{rp.installments}</p>
+                      <p className="text-xs text-gray-500 mt-1">{rp.category}</p>
                    </div>
                 </Link>
              ))}

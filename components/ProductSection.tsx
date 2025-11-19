@@ -1,10 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { PRODUCTS } from '../constants';
+import { useData, Product } from '../context/DataContext';
 import { ShoppingBag, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-type Product = typeof PRODUCTS[0];
 
 interface ProductCardProps {
   product: Product;
@@ -70,6 +68,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index }) => {
 };
 
 const ProductSection = () => {
+  const { products } = useData();
+  
   return (
     <section className="py-16 lg:py-24 bg-white" id="brinquedos">
       <div className="container mx-auto px-4">
@@ -96,15 +96,15 @@ const ProductSection = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {PRODUCTS.map((product, index) => (
+          {products.slice(0, 4).map((product, index) => (
             <ProductCard key={product.id} product={product} index={index} />
           ))}
         </div>
 
         <div className="mt-16 text-center">
-          <button className="inline-block border-2 border-brand-red text-brand-red px-10 py-3 rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-300 uppercase tracking-wide text-sm">
+          <Link to="/catalogo" className="inline-block border-2 border-brand-red text-brand-red px-10 py-3 rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-300 uppercase tracking-wide text-sm">
             Ver Todos os Brinquedos
-          </button>
+          </Link>
         </div>
       </div>
     </section>

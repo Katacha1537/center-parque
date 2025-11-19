@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ShoppingCart, User, Menu, X, Phone } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, Phone } from 'lucide-react';
 import { COMPANY_INFO } from '../constants';
 import { motion } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import { useData } from '../context/DataContext';
+
+interface NavItem {
+  label: string;
+  path: string;
+  hash?: string;
+}
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { cartCount, toggleCart } = useCart();
+  const { categories } = useData();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -18,64 +28,58 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNavClick = (e: React.MouseEvent, sectionId: string) => {
+  const handleNavClick = (e: React.MouseEvent, path: string, hash?: string) => {
     e.preventDefault();
     setIsMobileMenuOpen(false);
 
-    if (sectionId === 'home') {
+    if (path === '/') {
       if (location.pathname !== '/') {
         navigate('/');
+        if (hash) {
+          setTimeout(() => {
+             const element = document.getElementById(hash);
+             if(element) element.scrollIntoView({behavior: 'smooth'});
+          }, 100);
+        } else {
+          window.scrollTo({top: 0, behavior: 'smooth'});
+        }
       } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (hash) {
+           const element = document.getElementById(hash);
+           if(element) element.scrollIntoView({behavior: 'smooth'});
+        } else {
+           window.scrollTo({top: 0, behavior: 'smooth'});
+        }
       }
-      return;
-    }
-
-    // Helper to scroll to element
-    const scrollToElement = () => {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        const headerOffset = 100;
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      }
-    };
-
-    if (location.pathname !== '/') {
-      navigate('/');
-      // Wait for navigation to complete then scroll
-      setTimeout(scrollToElement, 100);
     } else {
-      scrollToElement();
+      navigate(path);
     }
   };
 
-  const navItems = [
-    { label: 'Início', id: 'home' },
-    { label: 'Pula-Pulas', id: 'brinquedos' }, // Mapping generic sections to the main product grid for now
-    { label: 'Tobogãs', id: 'brinquedos' },
-    { label: 'Piscinas de Bolinha', id: 'brinquedos' },
-    { label: 'Kits Promocionais', id: 'brinquedos' },
-    { label: 'Contato', id: 'footer' }
+  // Build nav items dynamically based on categories
+  const categoryLinks: NavItem[] = categories.slice(0, 4).map(cat => ({
+    label: cat.title,
+    path: `/catalogo?category=${cat.title}`
+  }));
+
+  const navItems: NavItem[] = [
+    { label: 'Início', path: '/', hash: '' },
+    ...categoryLinks,
+    { label: 'Catálogo Completo', path: '/catalogo' }
   ];
 
   return (
     <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'shadow-lg' : ''}`}>
       {/* Top Bar */}
-      <div className="bg-brand-red text-white py-2 px-4 text-xs sm:text-sm flex justify-between items-center">
-        <div className="hidden sm:flex gap-4">
-          <span>A maior variedade da região!</span>
-          <span>|</span>
-          <span>Fale conosco: {COMPANY_INFO.phone}</span>
+      <div className="bg-brand-red text-white py-2 px-4 text-xs sm:text-sm flex justify-center sm:justify-between items-center">
+        <div className="flex gap-4 items-center">
+          <span className="hidden sm:inline">A maior variedade de brinquedos da região!</span>
+          <span className="hidden sm:inline">|</span>
+          <span className="flex items-center gap-2 font-bold"><Phone size={14}/> {COMPANY_INFO.phone}</span>
         </div>
-        <div className="w-full sm:w-auto flex justify-center sm:justify-end gap-4">
-           <a href="#" className="hover:text-brand-yellow transition-colors">Blog</a>
-           <a href="#" className="hover:text-brand-yellow transition-colors">Quem Somos</a>
-           <a href="#" className="hover:text-brand-yellow transition-colors">Área do Cliente</a>
+        <div className="hidden sm:flex gap-6">
+           <Link to="/termos" className="hover:text-brand-yellow transition-colors font-medium">Termos</Link>
+           <Link to="/privacidade" className="hover:text-brand-yellow transition-colors font-medium">Privacidade</Link>
         </div>
       </div>
 
@@ -88,63 +92,60 @@ const Header = () => {
             <img 
               src={COMPANY_INFO.logoUrl} 
               alt={COMPANY_INFO.name} 
-              className={`transition-all duration-300 object-contain ${isScrolled ? 'h-12' : 'h-16 sm:h-20'}`}
+              className={`transition-all duration-300 object-contain ${isScrolled ? 'h-10' : 'h-14 sm:h-16'}`}
             />
           </Link>
 
           {/* Desktop Search */}
-          <div className="hidden lg:flex flex-1 max-w-xl mx-8 relative">
+          <div className="hidden lg:flex flex-1 max-w-md mx-8 relative">
             <input 
               type="text" 
-              placeholder="O que você procura para sua festa?" 
-              className="w-full border-2 border-gray-200 rounded-full py-2 px-6 focus:outline-none focus:border-brand-red transition-colors"
+              placeholder="O que você procura?" 
+              className="w-full bg-gray-50 border-2 border-gray-100 rounded-full py-2.5 px-6 focus:outline-none focus:border-brand-red transition-colors text-sm"
             />
-            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-brand-red text-white p-2 rounded-full hover:bg-red-700 transition-colors">
-              <Search size={18} />
+            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-brand-red text-white p-1.5 rounded-full hover:bg-red-700 transition-colors">
+              <Search size={16} />
             </button>
           </div>
 
-          {/* Icons / Actions */}
-          <div className="hidden md:flex items-center gap-6 text-gray-700">
-            <div className="flex items-center gap-2 cursor-pointer hover:text-brand-red">
-              <User size={24} />
-              <div className="flex flex-col leading-tight">
-                <span className="text-xs">Olá, acesse sua conta</span>
-                <span className="font-bold text-sm">Entre ou Cadastre-se</span>
-              </div>
-            </div>
-            
-            <div className="relative cursor-pointer hover:text-brand-red">
+          {/* Actions */}
+          <div className="flex items-center gap-4">
+            <div 
+              className="relative cursor-pointer text-gray-700 hover:text-brand-red transition-colors p-2"
+              onClick={toggleCart}
+            >
               <ShoppingCart size={28} />
-              <span className="absolute -top-2 -right-2 bg-brand-yellow text-brand-red font-bold text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                0
+              <span className="absolute top-0 right-0 bg-brand-red text-white font-bold text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
+                {cartCount}
               </span>
             </div>
+
+             {/* Mobile Menu Button */}
+            <button 
+              className="lg:hidden text-gray-700 hover:text-brand-red"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button 
-            className="lg:hidden text-brand-red"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+         
         </div>
       </div>
 
-      {/* Navigation Bar (Desktop) */}
-      <div className="bg-brand-red/5 border-b border-brand-red/10 hidden lg:block">
+      {/* Navigation Bar (Desktop) - Solid Color as requested */}
+      <div className="bg-brand-yellow hidden lg:block shadow-sm">
         <div className="container mx-auto px-4">
-          <nav className="flex justify-center gap-8 py-3">
+          <nav className="flex justify-center gap-1">
             {navItems.map((item) => (
-              <a
+              <Link
                 key={item.label} 
-                href={`#${item.id}`}
-                onClick={(e) => handleNavClick(e, item.id)}
-                className="text-gray-700 font-semibold hover:text-brand-red border-b-2 border-transparent hover:border-brand-red transition-all text-sm uppercase tracking-wide cursor-pointer"
+                to={item.path}
+                onClick={(e) => item.hash ? handleNavClick(e, item.path, item.hash) : null}
+                className="text-gray-900 font-bold py-3 px-6 hover:bg-white/20 transition-all text-sm uppercase tracking-wide"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
           </nav>
         </div>
@@ -157,29 +158,20 @@ const Header = () => {
           animate={{ opacity: 1, y: 0 }}
           className="lg:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl left-0 z-40"
         >
-          <nav className="flex flex-col p-4 gap-4">
-             <div className="relative">
-                <input 
-                  type="text" 
-                  placeholder="Buscar brinquedo..." 
-                  className="w-full border border-gray-300 rounded-lg py-2 px-4"
-                />
-                <Search className="absolute right-3 top-2.5 text-gray-400" size={20} />
-             </div>
+          <nav className="flex flex-col p-4">
              {navItems.map((item) => (
-              <a 
+              <Link 
                 key={item.label} 
-                href={`#${item.id}`}
-                className="text-gray-700 font-semibold py-2 border-b border-gray-100"
-                onClick={(e) => handleNavClick(e, item.id)}
+                to={item.path}
+                className="text-gray-700 font-bold py-3 border-b border-gray-100 hover:text-brand-red"
+                onClick={(e) => {
+                   if(item.hash) handleNavClick(e, item.path, item.hash);
+                   else setIsMobileMenuOpen(false);
+                }}
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
-             <div className="flex items-center gap-3 py-2 text-brand-red font-bold">
-              <Phone size={20} />
-              {COMPANY_INFO.phone}
-             </div>
           </nav>
         </motion.div>
       )}

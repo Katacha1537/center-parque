@@ -1,6 +1,8 @@
+
 import React from 'react';
 import { COMPANY_INFO } from '../constants';
-import { Facebook, Instagram, Youtube, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Lock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -25,11 +27,10 @@ const Footer = () => {
             <div>
               <h3 className="font-bold text-gray-900 mb-6">Institucional</h3>
               <ul className="space-y-3 text-sm text-gray-600">
-                 <li><a href="#" className="hover:text-brand-red">Quem Somos</a></li>
-                 <li><a href="#" className="hover:text-brand-red">Como Alugar</a></li>
-                 <li><a href="#" className="hover:text-brand-red">Segurança</a></li>
-                 <li><a href="#" className="hover:text-brand-red">Área de Atuação</a></li>
-                 <li><a href="#" className="hover:text-brand-red">Política de Privacidade</a></li>
+                 <li><Link to="/" className="hover:text-brand-red">Quem Somos</Link></li>
+                 <li><Link to="/catalogo" className="hover:text-brand-red">Catálogo</Link></li>
+                 <li><Link to="/termos" className="hover:text-brand-red">Termos de Uso</Link></li>
+                 <li><Link to="/privacidade" className="hover:text-brand-red">Política de Privacidade</Link></li>
               </ul>
             </div>
 
@@ -78,8 +79,11 @@ const Footer = () => {
             </div>
          </div>
 
-         <div className="border-t border-gray-100 pt-8 text-center text-xs text-gray-400">
+         <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
             <p>&copy; 2024 Center Parque. Todos os direitos reservados.</p>
+            <Link to="/admin" className="flex items-center gap-1 hover:text-brand-red transition-colors opacity-50 hover:opacity-100">
+               <Lock size={12} /> Área Administrativa
+            </Link>
          </div>
        </div>
     </footer>
